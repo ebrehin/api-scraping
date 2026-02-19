@@ -1,7 +1,7 @@
 services:
   mariadb:
     image: mariadb:latest
-    container_name: mariadb
+    container_name: scrapping
     environment:
       MARIADB_ROOT_PASSWORD: monMotDePasseSuperSecret
       MARIADB_DATABASE: test
