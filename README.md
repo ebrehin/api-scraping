@@ -49,17 +49,26 @@ api-scraping/
 
 ### Démarrage
 
+1. **Lancer la base de données** :
+
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
-Cette commande :
-1. Compile le projet Java avec Gradle (dans un container ou via build local selon config)
-2. Lance un container **MariaDB** (`scrapping`)
-3. Attend que MariaDB soit prêt
-4. Lance l'application **Spring Boot**
+Cette commande démarre le conteneur **MariaDB** (`scrapping`) sur le port 3306.
 
-L'API est accessible sur : **http://localhost:8080**  
+2. **Lancer l'application Spring Boot** :
+
+Vous devez exécuter la classe principale Java :
+`src/main/java/com/App.java`
+
+Ou via Gradle :
+
+```bash
+./gradlew bootRun
+```
+
+L'API sera alors accessible sur : **http://localhost:8080**  
 La documentation Swagger UI est accessible sur : **http://localhost:8080/swagger-ui.html**
 
 ### Arrêt
