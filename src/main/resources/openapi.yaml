@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
-  title: API de Gestion des Chiens
+  title: API de Scraping de Films
   description: |
-    API REST permettant la gestion des chiens dans le système.
-    Cette API permet de créer, lire, mettre à jour et supprimer des informations sur les chiens.
+    API REST permettant de scraper un film via OMDb, persister les entites,
+    et retourner un FilmDTO.
   version: 1.0.0
   contact:
     name: Support API
@@ -11,128 +11,94 @@ info:
 
 servers:
   - url: http://localhost:8080
-    description: Serveur de développement local
+    description: Serveur de developpement local
 
 tags:
-  - name: dogs
-    description: Opérations liées à la gestion des chiens
+  - name: scraping
+    description: Operations liees au scraping de films
 
 paths:
-  /dogs:
+  /api/scrap/film:
     get:
       tags:
-        - dogs
-      summary: Récupère tous les chiens
-      description: Retourne la liste complète des chiens enregistrés dans le système
-      operationId: getAllDogs
-      responses:
-        '200':
-          description: Liste des chiens récupérée avec succès
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DogDto'
-        '500':
-          description: Erreur serveur interne
-
-    post:
-      tags:
-        - dogs
-      summary: Crée un nouveau chien
-      description: Ajoute un nouveau chien dans le système
-      operationId: createDog
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DogDto'
-      responses:
-        '201':
-          description: Chien créé avec succès
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DogDto'
-        '400':
-          description: Données invalides
-        '500':
-          description: Erreur serveur interne
-
-  /dogs/{id}:
-    get:
-      tags:
-        - dogs
-      summary: Récupère un chien par son ID
-      description: Retourne les détails d'un chien spécifique
-      operationId: getDogById
+        - scraping
+      summary: Scrape un film par titre
+      description: Retourne le film trouve et persiste en base si necessaire
+      operationId: scrapeFilm
       parameters:
-        - name: id
-          in: path
-          description: ID du chien à récupérer
+        - name: query
+          in: query
+          description: Titre du film a rechercher
           required: true
           schema:
-            type: integer
-            format: int64
+            type: string
       responses:
         '200':
-          description: Chien trouvé
+          description: Film recupere avec succes
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DogDto'
+                $ref: '#/components/schemas/FilmDto'
         '404':
-          description: Chien non trouvé
-        '500':
-          description: Erreur serveur interne
-
-    delete:
-      tags:
-        - dogs
-      summary: Supprime un chien
-      description: Supprime un chien du système par son ID
-      operationId: deleteDog
-      parameters:
-        - name: id
-          in: path
-          description: ID du chien à supprimer
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Chien supprimé avec succès
-          content:
-            application/json:
-              schema:
-                type: boolean
-        '404':
-          description: Chien non trouvé
+          description: Film non trouve
         '500':
           description: Erreur serveur interne
 
 components:
   schemas:
-    DogDto:
+    FilmDto:
       type: object
-      description: Représentation d'un chien dans le système
+      description: Representation d'un film
       properties:
-        id:
+        title:
+          type: string
+          description: Titre du film
+          example: Inception
+        publicationYear:
           type: integer
-          format: int64
-          description: Identifiant unique du chien
-          example: 1
-        name:
-          type: string
-          description: Nom du chien
-          example: "Rex"
-        race:
-          type: string
-          description: Race du chien
-          example: "Berger Allemand"
+          format: int32
+          description: Annee de publication
+          example: 2010
+        artists:
+          type: array
+          description: Liste des artistes (acteurs)
+          items:
+            $ref: '#/components/schemas/ArtistDto'
+        poster:
+          $ref: '#/components/schemas/PosterDto'
       required:
-        - name
-        - race 
+        - title
+        - publicationYear
+        - artists
+        - poster
+
+    ArtistDto:
+      type: object
+      description: Artiste associe au film
+      properties:
+        firstName:
+          type: string
+          description: Prenom
+          example: Leonardo
+        lastName:
+          type: string
+          description: Nom
+          example: DiCaprio
+      required:
+        - firstName
+
+    PosterDto:
+      type: object
+      description: Affiche associee au film
+      properties:
+        title:
+          type: string
+          description: Titre associe a l'affiche
+          example: Inception poster
+        imageUrl:
+          type: string
+          description: URL de l'image
+          example: https://example.com/poster.jpg
+      required:
+        - title
+        - imageUrl
