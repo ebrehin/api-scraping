@@ -24,7 +24,6 @@ public class Film {
 	@Column(unique = true)
 	private String title;
 
-	private Integer minAge;
 	private Integer publicationYear;
 
 	@ManyToMany

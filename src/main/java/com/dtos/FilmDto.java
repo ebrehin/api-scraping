@@ -15,7 +15,6 @@ import java.util.List;
 public class FilmDTO {
 
 	private String title;
-	private Integer minAge;
 	private Integer publicationYear;
 	private List<ArtistDTO> artists;
 	private PosterDTO poster;

@@ -11,5 +11,4 @@ public class ArtistDTO {
 
 	private String firstName;
 	private String lastName;
-	private Integer age;
 }

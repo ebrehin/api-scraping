@@ -23,7 +23,6 @@ public class Artist {
 
 	private String firstName;
 	private String lastName;
-	private Integer age;
 
 	@ManyToMany(mappedBy = "artists")
 	private List<Film> films;

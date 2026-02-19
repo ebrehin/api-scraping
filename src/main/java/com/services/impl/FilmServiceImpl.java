@@ -8,6 +8,7 @@ import com.scrapper.FilmScraper;
 import com.services.FilmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class FilmServiceImpl implements FilmService {
 	private final FilmMapper mapper;
 
 	@Override
+	@Transactional
 	public FilmDTO scrapeAndSave(String query) {
 
 		FilmDTO scraped = scraper.scrape(query);
@@ -38,7 +40,6 @@ public class FilmServiceImpl implements FilmService {
 													Artist.builder()
 															.firstName(a.getFirstName())
 															.lastName(a.getLastName())
-															.age(a.getAge())
 															.build()
 											)
 									)
@@ -46,7 +47,6 @@ public class FilmServiceImpl implements FilmService {
 
 					Film film = Film.builder()
 							.title(scraped.getTitle())
-							.minAge(scraped.getMinAge())
 							.publicationYear(scraped.getPublicationYear())
 							.artists(artists)
 							.build();
@@ -59,7 +59,8 @@ public class FilmServiceImpl implements FilmService {
 							.film(savedFilm)
 							.build();
 
-					posterRepository.save(poster);
+					Poster savedPoster = posterRepository.save(poster);
+					savedFilm.setPoster(savedPoster);
 
 					return mapper.toDto(savedFilm);
 				});
