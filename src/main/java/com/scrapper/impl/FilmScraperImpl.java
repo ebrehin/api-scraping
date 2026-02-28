@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,12 +40,14 @@ public class FilmScraperImpl implements FilmScraper {
 
 	@Override
 	public FilmDTO scrape(String query) {
-		String url = UriComponentsBuilder.fromHttpUrl(baseUrl)
+		URI uri = UriComponentsBuilder.fromHttpUrl(baseUrl)
 				.queryParam("t", query)
 				.queryParam("apikey", apiKey)
-				.toUriString();
+				.build()
+				.encode()
+				.toUri();
 
-		OmdbResponse response = restTemplate.getForObject(url, OmdbResponse.class);
+		OmdbResponse response = restTemplate.getForObject(uri, OmdbResponse.class);
 
 		if (response == null || response.isFalse()) {
 			String error = response != null ? response.getError() : "No response from OMDb";
