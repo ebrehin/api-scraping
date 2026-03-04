@@ -14,7 +14,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,8 +53,8 @@ public class FilmScraperImpl implements FilmScraper {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, error);
 		}
 
-		List<ArtistDTO> artists = parseArtists(response.getActors());
-		PosterDTO poster = buildPoster(response.getPoster(), response.getTitle());
+		List<ArtistDTO> artists = parseArtists(response.getActors(), response.getDirector());
+		PosterDTO poster = buildPoster(response.getImdbId(), response.getPoster(), response.getTitle());
 
 		return FilmDTO.builder()
 				.title(response.getTitle())
@@ -65,13 +64,28 @@ public class FilmScraperImpl implements FilmScraper {
 				.build();
 	}
 
-	private static List<ArtistDTO> parseArtists(String actors) {
+	private static List<ArtistDTO> parseArtists(String actors, String director) {
+		List<ArtistDTO> result = new ArrayList<>();
+
+		// parse directors first
+		if (director != null && !director.isBlank() && !"N/A".equalsIgnoreCase(director)) {
+			for (String raw : director.split(",")) {
+				String name = raw.trim();
+				if (!name.isEmpty()) {
+					int lastSpace = name.lastIndexOf(' ');
+					result.add(ArtistDTO.builder()
+							.firstName(lastSpace > 0 ? name.substring(0, lastSpace) : name)
+							.lastName(lastSpace > 0 ? name.substring(lastSpace + 1) : null)
+							.build());
+				}
+			}
+		}
+
 		if (actors == null || actors.isBlank() || "N/A".equalsIgnoreCase(actors)) {
-			return Collections.emptyList();
+			return result;
 		}
 
 		String[] parts = actors.split(",");
-		List<ArtistDTO> result = new ArrayList<>(parts.length);
 		for (String raw : parts) {
 			String name = raw.trim();
 			if (name.isEmpty()) {
@@ -88,10 +102,11 @@ public class FilmScraperImpl implements FilmScraper {
 		return result;
 	}
 
-	private static PosterDTO buildPoster(String posterUrl, String title) {
+	private static PosterDTO buildPoster(String imdbId, String posterUrl, String title) {
 		String url = posterUrl == null || "N/A".equalsIgnoreCase(posterUrl) ? "" : posterUrl;
 		String safeTitle = title == null ? "" : title + " poster";
 		return PosterDTO.builder()
+				.imdbId(imdbId)
 				.title(safeTitle)
 				.imageUrl(url)
 				.build();

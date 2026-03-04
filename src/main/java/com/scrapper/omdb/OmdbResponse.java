@@ -13,10 +13,16 @@ public class OmdbResponse {
 	@JsonProperty("Actors")
 	private String actors;
 
+	@JsonProperty("Director")
+	private String director;
+
 	@JsonProperty("Poster")
 	private String poster;
 
-	@JsonProperty("Response")
+@JsonProperty("imdbID")
+        private String imdbId;
+
+        @JsonProperty("Response")
 	private String response;
 
 	@JsonProperty("Error")
@@ -34,11 +40,19 @@ public class OmdbResponse {
 		return actors;
 	}
 
+	public String getDirector() {
+		return director;
+	}
+
 	public String getPoster() {
 		return poster;
 	}
 
-	public String getResponse() {
+public String getImdbId() {
+                return imdbId;
+        }
+
+        public String getResponse() {
 		return response;
 	}
 
