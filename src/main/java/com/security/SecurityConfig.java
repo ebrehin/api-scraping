@@ -16,6 +16,7 @@ public class SecurityConfig {
 		JwtAuthenticationFilter jwtFilter = new JwtAuthenticationFilter(jwtProperties);
 
 		return http
+				.cors(org.springframework.security.config.Customizer.withDefaults())
 				.csrf(csrf -> csrf.disable())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.exceptionHandling(ex -> ex.authenticationEntryPoint(new JwtAuthEntryPoint()))
