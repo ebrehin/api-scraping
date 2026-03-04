@@ -9,6 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class PosterDTO {
 
-	private String title;
-	private String imageUrl;
+        private String imdbId;
+        private String title;
+        private String imageUrl;
 }
