@@ -5,6 +5,7 @@ import com.entities.*;
 import com.mappers.FilmMapper;
 import com.repositories.*;
 import com.scrapper.FilmScraper;
+import com.services.ExternalSyncService;
 import com.services.FilmService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,14 @@ public class FilmServiceImpl implements FilmService {
 	private final PosterRepository posterRepository;
 	private final FilmScraper scraper;
 	private final FilmMapper mapper;
+	private final ExternalSyncService externalSyncService;
 
 	@Override
 	@Transactional
 	public FilmDTO scrapeAndSave(String query) {
 
 		FilmDTO scraped = scraper.scrape(query);
+		externalSyncService.sync(scraped);
 
 		return filmRepository.findByTitle(scraped.getTitle())
 				.map(mapper::toDto)
