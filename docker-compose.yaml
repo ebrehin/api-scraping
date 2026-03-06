@@ -1,1 +1,14 @@
 services:
+  scraping-api:
+    image: gitlab-depinfo.univ-brest.fr:5050/e22200893/apis/scraping-api:v1.0.4
+    ports:
+      - "10062:8085"
+    environment:
+      SERVER_PORT: 8085
+      OMDB_API_KEY: ab5f54b5
+      OMDB_BASE_URL: https://www.omdbapi.com/
+      TMDB_API_KEY: 1b5cece34e7f80ffc563eecc9103f7b2
+      TMDB_BASE_URL: https://api.themoviedb.org/3
+      SECURITY_JWT_SECRET: CHANGE_ME_TO_A_LONG_RANDOM_SECRET_KEY_32CHARS_MIN
+      SECURITY_JWT_EXPIRATION: 3h
+    restart: unless-stopped

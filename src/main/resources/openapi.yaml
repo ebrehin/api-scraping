@@ -10,7 +10,7 @@ info:
     email: support@example.com
 
 servers:
-  - url: http://localhost:8085
+  - url: http://info-tpsi.univ-brest.fr:10062
     description: Serveur de developpement local
 
 tags:
@@ -41,6 +41,33 @@ paths:
                 $ref: '#/components/schemas/FilmDto'
         '404':
           description: Film non trouve
+        '500':
+          description: Erreur serveur interne
+  /api/scrap/artist:
+    get:
+      tags:
+        - scraping
+      summary: Scrape des artistes par nom
+      description: Retourne la liste des artistes trouves via TMDB
+      operationId: scrapeArtists
+      parameters:
+        - name: query
+          in: query
+          description: Nom de l'artiste a rechercher
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Artistes recuperes avec succes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ArtistDto'
+        '404':
+          description: Artiste non trouve
         '500':
           description: Erreur serveur interne
 
